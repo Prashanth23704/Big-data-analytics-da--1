@@ -1,0 +1,89 @@
+import java.io.*;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.*;
+import org.apache.hadoop.mapreduce.lib.output.*;
+
+
+public class L10Q2_22MIS1067 {
+
+  public static class M
+       extends Mapper<Text, Text, Text, Text>{
+	
+    public void map(Text key, Text value, Context context
+                    ) throws IOException, InterruptedException {
+      context.write(key,value);
+    }
+  }
+
+  public static class P extends Partitioner<Text,Text>{
+    public int getPartition(Text key,Text val,int num){
+      if("Mathematics".equals(key.toString())) return 0;
+      else if("Physics".equals(key.toString())) return 1;
+      else if("Chemistry".equals(key.toString())) return 2;
+      else if("Biology".equals(key.toString())) return 3;
+      else if("English".equals(key.toString())) return 4;
+      else if("History".equals(key.toString())) return 5;
+      else if("Geography".equals(key.toString())) return 6;
+      else if("CS".equals(key.toString())) return 7;
+      else if("Economics".equals(key.toString())) return 8;
+      else return 9;
+    }
+  }
+  
+  public static class R extends Reducer<Text,Text,Text,Text>{
+    
+    public void reduce(Text key,Iterable<Text> val,Context context) throws IOException,InterruptedException{
+      String name1="",name2="",name3="";
+      int mark1=0,mark2=0,mark3=0;
+      for(Text t:val){
+        String str = t.toString();
+        String s[] = str.split(" ");
+        
+        if(Integer.parseInt(s[1])>mark1){
+            mark3 = mark2;
+            mark2 = mark1;
+            mark1 = Integer.parseInt(s[1]);
+            name3 = name2;
+            name2 = name1;
+            name1 = s[0];
+       }
+       else if(Integer.parseInt(s[1])>mark2 && mark2<=mark1){
+            mark3 = mark2;
+            mark2 = Integer.parseInt(s[1]);
+            name3 = name2;
+            name2 = s[0];
+       }
+       else if(Integer.parseInt(s[1])>mark2 && mark3<=mark2){
+            mark3 = Integer.parseInt(s[1]);
+            name3 = s[0];
+       }
+    }
+    String result1 = name1+" "+mark1;
+    context.write(key,new Text(result1));
+    String result2 = name2+" "+mark2;
+    context.write(key,new Text(result2));
+    String result3 = name3+" "+mark3;
+    context.write(key,new Text(result3));
+    }
+  } 
+  
+  public static void main(String[] args) throws Exception {
+    Configuration conf = new Configuration();
+    conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", " ");
+    Job job = new Job(conf, "word count");
+    job.setJarByClass(L10Q2_22MIS1067.class);
+    job.setInputFormatClass(KeyValueTextInputFormat.class);
+    job.setMapperClass(M.class);
+    job.setReducerClass(R.class);
+    job.setPartitionerClass(P.class);
+    job.setNumReduceTasks(10);
+    job.setOutputKeyClass(Text.class);
+    job.setOutputValueClass(Text.class);
+    FileInputFormat.addInputPath(job, new Path(args[0]));
+    FileOutputFormat.setOutputPath(job, new Path(args[1]));
+    System.exit(job.waitForCompletion(true) ? 0 : 1);
+  }
+}
