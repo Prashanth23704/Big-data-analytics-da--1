@@ -7,7 +7,7 @@ import org.apache.hadoop.mapreduce.lib.input.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 
 
-public class L10Q2_22MIS1067 {
+public class L10Q2_22MIS1046 {
 
   public static class M
        extends Mapper<Text, Text, Text, Text>{
@@ -74,7 +74,7 @@ public class L10Q2_22MIS1067 {
     Configuration conf = new Configuration();
     conf.set("mapreduce.input.keyvaluelinerecordreader.key.value.separator", " ");
     Job job = new Job(conf, "word count");
-    job.setJarByClass(L10Q2_22MIS1067.class);
+    job.setJarByClass(L10Q2_22MIS1046.class);
     job.setInputFormatClass(KeyValueTextInputFormat.class);
     job.setMapperClass(M.class);
     job.setReducerClass(R.class);
