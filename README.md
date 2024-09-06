@@ -129,4 +129,8 @@ This Hadoop MapReduce program processes student score data for various subjects 
 
 - OUTPUT:
 - 
-- 
+![Screenshot (430)](https://github.com/user-attachments/assets/e5e2bcb8-274b-42ee-a9ce-d56ebc4b7918)
+![Screenshot (431)](https://github.com/user-attachments/assets/28e05248-b5a9-4022-87e4-f7a32575d96c)
+
+
+
